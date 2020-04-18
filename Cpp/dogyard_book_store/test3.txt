@@ -1,0 +1,3 @@
+P342,500,Black Holes and Baby Universes
+P8,90,Love in the time of Cholera
+P675,23,Number Theory and Cryptography
