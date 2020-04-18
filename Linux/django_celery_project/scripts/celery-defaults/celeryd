@@ -1,0 +1,56 @@
+# Name of nodes to start, here we have two nodes with name w1 and w2
+CELERYD_NODES="w1 w2"
+
+# Absolute or relative path to the 'celery' command:
+CELERY_BIN="/usr/local/bin/celery"
+# In case you are using virtualenv
+#CELERY_BIN="/virtualenvs/def/bin/celery" 
+
+# App instance to use
+# comment out this line if you don't use an app
+#CELERY_APP="proj"
+# or fully qualified:
+CELERY_APP="django_celery"
+
+
+# Where to chdir at start.
+CELERYD_CHDIR="Path to the django project folder containing manage.py file"
+
+# Python interpreter from environment, if using virtualenv
+ENV_PYTHON="/home/tripsus/.virtualenvs/celery_vf/bin/python"
+
+# How to call "manage.py celeryd_multi"
+#CELERYD_MULTI="$CELERYD_CHDIR/manage.py celeryd_multi"
+#CELERYD_MULTI="$ENV_PYTHON $CELERYD_CHDIR/manage.py celeryd_multi"
+
+# How to call "manage.py celeryctl"
+#CELERYCTL="$CELERYD_CHDIR/manage.py celeryctl"
+#CELERYCTL="$ENV_PYTHON $CELERYD_CHDIR/manage.py celeryctl"
+
+
+# Extra arguments to celeryd
+#CELERYD_OPTS="--time-limit=300 --concurrency=8"
+#CELERYD_OPTS="multi start 2 -Q:1 test -Q:2 celery -c1:2 -c2:1"
+# w1 worker will poll queue celery and w2 will poll queue test when load is high number of workers will increase from 1 to 10(autoscale)
+CELERYD_OPTS="-Q:w1 celery -c:w1 2 --autoscale=10,1 -Q:w2 test -c:w2 2 --autoscale=10,2 --time-limit=36000 -E"
+# Name of the celery config module, don't change this.
+
+#CELERY_CONFIG_MODULE="celeryconfig"
+
+# %n will be replaced with the nodename.
+CELERYD_LOG_FILE="/var/log/celery/%n.log"
+CELERYD_PID_FILE="/var/run/celery/%n.pid"
+
+# Workers should run as an unprivileged user.
+CELERYD_USER="celery"
+CELERYD_GROUP="celery"
+
+CELERY_CREATE_DIRS=1
+# Set any other env vars here too!
+#PROJET_ENV="PRODUCTION"
+
+# Name of the projects settings module.
+# in this case is just settings and not the full path because it will change the dir to
+# the project folder first.
+export DJANGO_SETTINGS_MODULE="django_celery.settings"
+
