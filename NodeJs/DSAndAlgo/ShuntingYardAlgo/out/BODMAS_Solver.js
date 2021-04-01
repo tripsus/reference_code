@@ -76,15 +76,12 @@ var Stack = /** @class */ (function () {
 }());
 var TokenType;
 (function (TokenType) {
-    TokenType[TokenType["Number"] = 0] = "Number";
+    TokenType[TokenType["Operand"] = 0] = "Operand";
     TokenType[TokenType["Operator"] = 1] = "Operator";
     TokenType[TokenType["Parenthesis"] = 2] = "Parenthesis";
-    TokenType[TokenType["Unknown"] = 3] = "Unknown"; // God knows what this is :D
+    TokenType[TokenType["Unknown"] = 3] = "Unknown";
 })(TokenType || (TokenType = {}));
 ;
-function isNumber(token) {
-    return !isNaN(Number(token));
-}
 function getTokenType(token) {
     if (token === '(' || token === ')') {
         return TokenType.Parenthesis;
@@ -92,8 +89,8 @@ function getTokenType(token) {
     else if (token === '/' || token === '*' || token === '+' || token === '-') {
         return TokenType.Operator;
     }
-    else if (isNumber(token)) {
-        return TokenType.Number;
+    else if (!isNaN(Number(token))) {
+        return TokenType.Operand;
     }
     else {
         return TokenType.Unknown;
@@ -123,7 +120,7 @@ function generatePostFix(expression) {
         if (errorEncountered)
             break;
         var tokenType = getTokenType(token);
-        if (tokenType === TokenType.Number) {
+        if (tokenType === TokenType.Operand) {
             tokenQueue.enqueue(token);
         }
         else if (tokenType === TokenType.Operator) {
@@ -179,65 +176,19 @@ function generatePostFix(expression) {
     }
     if (!errorEncountered) {
         while (operatorStack.topOfStack()) {
-            if (operatorStack.topOfStack() === '(') {
-                console.error("Input is not correct");
-                errorEncountered = true;
-                break;
-            }
-            else {
-                tokenQueue.enqueue(operatorStack.pop());
-            }
+            tokenQueue.enqueue(operatorStack.pop());
         }
-    }
-    if (!errorEncountered) {
         while (!tokenQueue.isEmpty()) {
             postFixExpression += tokenQueue.dequeue();
         }
     }
     return postFixExpression;
 }
-function calculate(operation, aToken, bToken) {
-    var a = parseInt(aToken);
-    var b = parseInt(bToken);
-    if (operation === '/') {
-        return b / a;
-    }
-    else if (operation === '*') {
-        return b * a;
-    }
-    else if (operation === '+') {
-        return b + a;
-    }
-    else {
-        return b - a;
-    }
-}
-function evaluateRPN(rpnExpression) {
-    var calculatedValue = 0;
-    var numberStack = new Stack(rpnExpression.length);
-    for (var i = 0; i < rpnExpression.length; i++) {
-        var token = rpnExpression[i];
-        if (isNumber(token)) {
-            numberStack.push(token);
-        }
-        else if (getTokenType(token) === TokenType.Operator) {
-            var aToken = numberStack.pop();
-            var bToken = numberStack.pop();
-            var result = calculate(token, aToken, bToken);
-            numberStack.push(result.toString());
-        }
-        else {
-            console.error("Shouldn't have reached here. Check your generatePostFix method for errors");
-        }
-    }
-    return parseInt(numberStack.topOfStack());
-}
 function evaluteExpression(expression) {
     var rpn = generatePostFix(expression);
     console.log(rpn);
-    console.log("Calculated value for expression is");
-    console.log(evaluateRPN(rpn));
 }
 // let equation = '3+4/2*(1−5)'
 var equation = '3+4/2*(1-5)';
 evaluteExpression(equation);
+//# sourceMappingURL=BODMAS_Solver.js.map
